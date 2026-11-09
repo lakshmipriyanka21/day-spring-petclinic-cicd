@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -33,6 +34,19 @@ pipeline {
         stage('Package') {
             steps {
                 bat 'mvn package'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    bat '''
+                        mvn sonar:sonar ^
+                        -Dsonar.projectKey=lakshmipriyanka21_day-spring-petclinic-cicd ^
+                        -Dsonar.organization=lakshmipriyanka21 ^
+                        -Dsonar.host.url=https://sonarcloud.io
+                    '''
+                }
             }
         }
     }
