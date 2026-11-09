@@ -1,4 +1,5 @@
 
+
 pipeline {
     agent any
 
@@ -39,13 +40,22 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-server') {
-                    bat '''
-                        mvn sonar:sonar ^
-                        -Dsonar.projectKey=lakshmipriyanka21_day-spring-petclinic-cicd ^
-                        -Dsonar.organization=lakshmipriyanka21 ^
-                        -Dsonar.host.url=https://sonarcloud.io
-                    '''
+                script {
+                    def scannerHome = tool 'sonar-scanner'
+
+                    withSonarQubeEnv('sonar-server') {
+                        withEnv(["SCANNER_HOME=${scannerHome}"]) {
+                            bat '''
+                            @echo off
+                            call "%SCANNER_HOME%\\bin\\sonar-scanner.bat" ^
+                            -Dsonar.projectKey=lakshmipriyanka21_day-spring-petclinic-cicd ^
+                            -Dsonar.organization=lakshmipriyanka21 ^
+                            -Dsonar.host.url=https://sonarcloud.io ^
+                            -Dsonar.sources=src/main ^
+                            -Dsonar.java.binaries=target/classes
+                            '''
+                        }
+                    }
                 }
             }
         }
