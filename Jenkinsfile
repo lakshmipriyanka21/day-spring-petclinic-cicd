@@ -1,5 +1,6 @@
 
 
+
 pipeline {
     agent any
 
@@ -57,6 +58,12 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                bat 'docker build -t day40-petclinic:latest .'
             }
         }
     }
